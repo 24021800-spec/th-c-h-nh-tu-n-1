@@ -31,8 +31,7 @@ int main() {
         cout << a[i] << " ";
     }
     cout << endl;
-
     return 0;
 }
-
+// độ phức tạp o(n^2)
     
