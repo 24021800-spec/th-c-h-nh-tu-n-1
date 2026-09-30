@@ -19,3 +19,4 @@ int main() {
     cout << "Tong cac phan tu trong day: " << sum << endl;
     return 0;
 }
+// Độ phức tạp thuật toán là: O(n).
