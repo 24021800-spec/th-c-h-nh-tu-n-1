@@ -22,7 +22,6 @@ void rutGonPhanSo(int &a, int &b) {
 }
 int main() {
     int a, b;
-
     cout << "Nhap tu so (a): ";
     cin >> a;
     cout << "Nhap mau so (b): ";
@@ -41,3 +40,4 @@ int main() {
     }
     return 0;
 }
+// độ phức tạp o(1)
