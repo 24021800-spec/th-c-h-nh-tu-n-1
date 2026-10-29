@@ -1,131 +1,125 @@
+
 #include <iostream>
 using namespace std;
 
-const int M = 7;
-//  Hash table dung dia chi mo (Open Addressing)
+const int M = 10;
+int table[M];
 
-class HashTable {
-private:
-    int table[M];
-    int state[M]; // 0: empty, 1: occupied, 2: deleted
+int hashFunction(int x) {
+    return ((x % M) + M) % M;
+}
 
-    int hashFunction(int key) {
-        return ((key % M) + M) % M;
+void insert(int x) {
+    int h = hashFunction(x);
+    int i = 0;
+
+    while (i < M && table[h] != -1) {
+        h = (h + 1) % M;
+        i++;
     }
 
-public:
-    HashTable() {
-        for (int i = 0; i < M; i++) {
-            state[i] = 0;
-        }
+    if (i == M) {
+        cout << "Bang bam da day!\n";
+        return;
     }
 
-    void insert(int key) {
-        int index = hashFunction(key);
-        int firstDeleted = -1;
+    table[h] = x;
+}
 
-        for (int i = 0; i < M; i++) {
-            int pos = (index + i) % M;
+bool search(int x) {
+    int h = hashFunction(x);
+    int i = 0;
 
-            if (state[pos] == 1) {
-                if (table[pos] == key) {
-                    cout << "Key already exists!\n";
-                    return;
-                }
-            }
-            else if (state[pos] == 2) {
-                if (firstDeleted == -1)
-                    firstDeleted = pos;
-            }
-            else {
-                if (firstDeleted != -1)
-                    pos = firstDeleted;
+    while (i < M && table[h] != -1) {
+        if (table[h] == x)
+            return true;
 
-                table[pos] = key;
-                state[pos] = 1;
-                return;
-            }
-        }
+        h = (h + 1) % M;
+        i++;
+    }
 
-        if (firstDeleted != -1) {
-            table[firstDeleted] = key;
-            state[firstDeleted] = 1;
+    return false;
+}
+
+void removeElement(int x) {
+    int h = hashFunction(x);
+    int i = 0;
+
+    while (i < M && table[h] != -1) {
+        if (table[h] == x) {
+            table[h] = -2;
+            cout << "Da xoa " << x << endl;
             return;
         }
 
-        cout << "Hash table is full!\n";
+        h = (h + 1) % M;
+        i++;
     }
 
-    bool search(int key) {
-        int index = hashFunction(key);
+    cout << "Khong tim thay " << x << endl;
+}
 
-        for (int i = 0; i < M; i++) {
-            int pos = (index + i) % M;
+void display() {
+    for (int i = 0; i < M; i++) {
+        cout << i << ": ";
 
-            if (state[pos] == 0)
-                return false;
+        if (table[i] == -1 || table[i] == -2)
+            cout << "NULL";
+        else
+            cout << table[i];
 
-            if (state[pos] == 1 && table[pos] == key)
-                return true;
-        }
-
-        return false;
+        cout << endl;
     }
-
-    void remove(int key) {
-        int index = hashFunction(key);
-
-        for (int i = 0; i < M; i++) {
-            int pos = (index + i) % M;
-
-            if (state[pos] == 0) {
-                cout << "Key not found!\n";
-                return;
-            }
-
-            if (state[pos] == 1 && table[pos] == key) {
-                state[pos] = 2;
-                cout << "Key removed!\n";
-                return;
-            }
-        }
-
-        cout << "Key not found!\n";
-    }
-
-    void display() {
-        for (int i = 0; i < M; i++) {
-            cout << i << ": ";
-
-            if (state[i] == 1)
-                cout << table[i];
-            else if (state[i] == 2)
-                cout << "DELETED";
-            else
-                cout << "EMPTY";
-
-            cout << '\n';
-        }
-    }
-};
+}
 
 int main() {
-    HashTable ht;
+    for (int i = 0; i < M; i++)
+        table[i] = -1;
 
-    ht.insert(10);
-    ht.insert(17);
-    ht.insert(24);
-    ht.insert(5);
-    ht.insert(12);
+    int n, x, chon;
 
-    ht.display();
+    cout << "Nhap so phan tu: ";
+    cin >> n;
 
-    cout << "Search 17: " << ht.search(17) << '\n';
+    cout << "Nhap mang: ";
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        insert(x);
+    }
 
-    ht.remove(17);
-    ht.display();
+    do {
+        cout << "\n1. Them\n";
+        cout << "2. Tim kiem\n";
+        cout << "3. Xoa\n";
+        cout << "4. In bang bam\n";
+        cout << "0. Thoat\n";
+        cout << "Chon: ";
+        cin >> chon;
 
-    cout << "Search 24: " << ht.search(24) << '\n';
+        if (chon == 1) {
+            cout << "Nhap so can them: ";
+            cin >> x;
+            insert(x);
+        }
+        else if (chon == 2) {
+            cout << "Nhap so can tim: ";
+            cin >> x;
+
+            if (search(x))
+                cout << "Tim thay\n";
+            else
+                cout << "Khong tim thay\n";
+        }
+        else if (chon == 3) {
+            cout << "Nhap so can xoa: ";
+            cin >> x;
+            removeElement(x);
+        }
+        else if (chon == 4) {
+            display();
+        }
+
+    } while (chon != 0);
 
     return 0;
 }
