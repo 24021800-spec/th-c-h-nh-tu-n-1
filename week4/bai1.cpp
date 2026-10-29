@@ -2,124 +2,76 @@
 #include <iostream>
 using namespace std;
 
-const int M = 7;
-// Linked list hash table
+const int M = 10;
 
 struct Node {
-    int key;
-    Node* next;
-
-    Node(int value) {
-        key = value;
-        next = nullptr;
-    }
+    int data;
+    Node *next;
 };
 
-class HashTable {
-private:    // Nhung ham duoc khai bao voi muc dich chi de su dung trong noi bo class, khong the dung o ngoai
-    Node* table[M];
+Node *table[M] = {NULL};
 
-    int hashFunction(int key) {     //<---
-        return ((key % M) + M) % M;
-    }
+int hashFunction(int x) {
+    return x % M;
+}
 
-public:     // Nhung ham duoc khai bao co the duoc su dung o cac ham khac
-    HashTable() {
-        for (int i = 0; i < M; i++)
-            table[i] = nullptr;
-    }
+void insert(int x) {
+    int h = hashFunction(x);
 
-    void insert(int key) {
-        int index = hashFunction(key);      //<---
+    Node *p = new Node{x, table[h]};
+    table[h] = p;
+}
 
-        if (search(key)) {
-            cout << "Key already exists!\n";
-            return;
-        }
+void display() {
+    for (int i = 0; i < M; i++) {
+        cout << i << ": ";
+        Node *p = table[i];
 
-        Node* p = new Node(key);
-        p->next = table[index];
-        table[index] = p;
-    }
-
-    bool search(int key) {
-        int index = hashFunction(key);
-        Node* p = table[index];
-
-        while (p != nullptr) {
-            if (p->key == key)
-                return true;
+        while (p != NULL) {
+            cout << p->data << " -> ";
             p = p->next;
         }
 
-        return false;
+        cout << "NULL" << endl;
+    }
+}
+
+bool search(int x) {
+    int h = hashFunction(x);
+    Node *p = table[h];
+
+    while (p != NULL) {
+        if (p->data == x)
+            return true;
+        p = p->next;
     }
 
-    void remove(int key) {
-        int index = hashFunction(key);
-        Node* p = table[index];
-        Node* prev = nullptr;
-
-        while (p != nullptr && p->key != key) {
-            prev = p;
-            p = p->next;
-        }
-
-        if (p == nullptr) {
-            cout << "Key not found!\n";
-            return;
-        }
-
-        if (prev == nullptr)
-            table[index] = p->next;
-        else
-            prev->next = p->next;
-
-        delete p;
-    }
-
-    void display() {
-        for (int i = 0; i < M; i++) {
-            cout << i << ": ";
-            Node* p = table[i];
-
-            while (p != nullptr) {
-                cout << p->key << " -> ";
-                p = p->next;
-            }
-
-            cout << "NULL\n";
-        }
-    }
-
-    ~HashTable() {
-        for (int i = 0; i < M; i++) {
-            Node* p = table[i];
-
-            while (p != nullptr) {
-                Node* temp = p;
-                p = p->next;
-                delete temp;
-            }
-        }
-    }
-};
+    return false;
+}
 
 int main() {
-    HashTable ht;
+    int n, a[100];
 
-    ht.insert(10);
-    ht.insert(17);
-    ht.insert(24);
-    ht.insert(5);
-    ht.insert(12);
+    cout << "Nhap n: ";
+    cin >> n;
 
-    ht.display();
+    cout << "Nhap mang: ";
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        insert(a[i]);
+    }
 
-    cout << "Search 17: " << ht.search(17) << '\n';
+    cout << "\nBang bam:\n";
+    display();
 
-    ht.remove(17);
-    ht.display();
+    int x;
+    cout << "Nhap so can tim: ";
+    cin >> x;
+
+    if (search(x))
+        cout << "Tim thay";
+    else
+        cout << "Khong tim thay";
 
     return 0;
 }
